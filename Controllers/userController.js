@@ -2,6 +2,7 @@ const transporter = require('../Helpers/transporter')
 const db = require('../models')
 const User = db.User
 const bcrypt = require('bcrypt')
+const jwt = require('jsonwebtoken')
 
 module.exports = {
     registerUser: async (req, res) => {
@@ -42,11 +43,14 @@ module.exports = {
                             })
 
                             if (result) {
+                                let payload = {email: email}
+                                const token = jwt.sign(payload, 'verification-account', {expiresIn: '1h'})
+
                                 await transporter.sendMail({
                                     from: 'eggiyapari19@gmail.com',
                                     to: email,
                                     subject: 'Account Verification',
-                                    html: `<h1>Account Verification</h1>`
+                                    html: `<a href="http://localhost:3000/verification?token=${token}">Account Verification</a>`
                                 })
 
                                 return res.send({
@@ -76,9 +80,31 @@ module.exports = {
 
     userVerification: async (req, res) => {
         try {
+            let token = req.headers.authorization
+            token = token.split(' ')[1]
+
+            let verifiedUser = jwt.verify(token, 'verification-account')
+
+            if(!verifiedUser) throw {message: "Unauthorized request"}
+
+            const result = User.update({isVerified: true}, {
+                where: {
+                    email: verifiedUser.email
+                }
+            })
+
+            res.send({
+                success: true,
+                message: "verification success",
+                data: result
+            })
             
         } catch (error) {
-            
+            res.send({
+                success: false,
+                message: error.message,
+                data: null
+            })
         }
     }
 }
