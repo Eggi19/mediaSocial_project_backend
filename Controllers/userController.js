@@ -19,16 +19,17 @@ module.exports = {
             })
             const isEmail = new RegExp('[a-z0-9]+@[a-z]+\.[a-z]{2,3}')
 
-            if (!isEmail.test(email)) {
-                throw { message: "email is not valid" }
-            } else {
-                if (findEmail) {
-                    throw { message: "email had been used" }
-                } else if (findUsername) {
-                    throw { message: "username had been used" }
+            if (firstName && lastName && email && username && password && passwordConfirm) {
+                if (!isEmail.test(email)) {
+                    throw { message: "email is not valid" }
                 } else {
-                    if (passwordValidation) {
-                        if (firstName && lastName && email && username && password && passwordConfirm) {
+                    if (findEmail) {
+                        throw { message: "email had been used" }
+                    } else if (findUsername) {
+                        throw { message: "username had been used" }
+                    } else {
+                        if (passwordValidation) {
+
                             const salt = await bcrypt.genSalt(10)
                             const hashPassword = await bcrypt.hash(password, salt)
                             const result = await User.create({
@@ -49,12 +50,12 @@ module.exports = {
                                 throw { message: "register user failed" }
                             }
                         } else {
-                            throw { message: "complete the form" }
+                            throw { message: "password does not match" }
                         }
-                    } else {
-                        throw { message: "password does not match" }
                     }
                 }
+            } else {
+                throw { message: "complete the form" }
             }
         } catch (error) {
             res.send({
