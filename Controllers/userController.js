@@ -1,3 +1,4 @@
+const transporter = require('../Helpers/transporter')
 const db = require('../models')
 const User = db.User
 const bcrypt = require('bcrypt')
@@ -41,6 +42,13 @@ module.exports = {
                             })
 
                             if (result) {
+                                await transporter.sendMail({
+                                    from: 'eggiyapari19@gmail.com',
+                                    to: email,
+                                    subject: 'Account Verification',
+                                    html: `<h1>Account Verification</h1>`
+                                })
+
                                 return res.send({
                                     success: true,
                                     message: "register user success",
@@ -63,6 +71,14 @@ module.exports = {
                 message: error.message,
                 data: null
             })
+        }
+    },
+
+    userVerification: async (req, res) => {
+        try {
+            
+        } catch (error) {
+            
         }
     }
 }
