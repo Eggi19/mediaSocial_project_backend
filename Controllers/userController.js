@@ -29,11 +29,13 @@ module.exports = {
                 } else {
                     if (passwordValidation) {
                         if (firstName && lastName && email && username && password && passwordConfirm) {
+                            const salt = await bcrypt.genSalt(10)
+                            const hashPassword = await bcrypt.hash(password, salt)
                             const result = await User.create({
                                 fullName: firstName + " " + lastName,
                                 email,
                                 username,
-                                password,
+                                password: hashPassword,
                                 isVerified: false
                             })
 
