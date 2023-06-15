@@ -98,7 +98,7 @@ module.exports = {
                 message: "verification success",
                 data: result
             })
-            
+
         } catch (error) {
             res.send({
                 success: false,
