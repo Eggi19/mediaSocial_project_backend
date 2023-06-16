@@ -1,4 +1,3 @@
-const { get } = require('../Helpers/transporter')
 const db = require('../models')
 const User = db.User
 const bcrypt = require('bcrypt')
