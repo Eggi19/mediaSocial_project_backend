@@ -6,6 +6,7 @@ const bcrypt = require('bcrypt')
 module.exports = {
     login: async (req, res) => {
         try {
+            console.log('masuk backend');
             const { usernameOrEmail, password } = req.body
             const isEmail = new RegExp('[a-z0-9]+@[a-z]+\.[a-z]{2,3}')
 
