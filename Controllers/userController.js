@@ -3,6 +3,8 @@ const db = require('../models')
 const User = db.User
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
+const handlebars = require('handlebars')
+const fs = require('fs')
 
 module.exports = {
     registerUser: async (req, res) => {
@@ -44,13 +46,15 @@ module.exports = {
 
                             if (result) {
                                 let payload = {email: email}
-                                const token = jwt.sign(payload, 'verification-account', {expiresIn: '1h'})
-
+                                const token = jwt.sign(payload, 'verification-account')
+                                const data = fs.readFileSync('./Supports/template.html', 'utf-8')
+                                const tempCompile = await handlebars.compile(data)
+                                const tempResult = tempCompile({token: token})
                                 await transporter.sendMail({
                                     from: 'eggiyapari19@gmail.com',
                                     to: email,
                                     subject: 'Account Verification',
-                                    html: `<a href="http://localhost:3000/verification?token=${token}">Account Verification</a>`
+                                    html: tempResult
                                 })
 
                                 return res.send({
