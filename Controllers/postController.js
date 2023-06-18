@@ -33,17 +33,28 @@ module.exports = {
     likePost: async (req, res) => {
         try {
             const { postId, userId } = req.body
-
-            const result = await Like.create({
-                postId,
-                userId
+            const checkLike = await Like.findOne({
+                where: {
+                    postId: postId,
+                    userId: userId
+                }
             })
 
-            res.send({
-                success: true,
-                message: 'like success',
-                data: result
-            })
+            if(!checkLike){
+                const result = await Like.create({
+                    postId,
+                    userId
+                })
+    
+                res.send({
+                    success: true,
+                    message: 'like success',
+                    data: result
+                })
+            }else{
+                const errorMessage = "post is already liked"
+                throw errorMessage
+            }
         } catch (error) {
             res.send({
                 success: false,
