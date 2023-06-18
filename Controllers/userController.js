@@ -110,5 +110,21 @@ module.exports = {
                 data: null
             })
         }
+    },
+
+    updateUser: async (req, res) => {
+        try {
+            const {userId} = req.params
+            const {username, fullName, bio, profilePicture} = req.body
+
+            const findUsername = await User.findOne({
+                where: {
+                    username: username
+                }
+            })
+            
+        } catch (error) {
+            
+        }
     }
 }
