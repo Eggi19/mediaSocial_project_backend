@@ -4,7 +4,6 @@ const Post = db.Post
 module.exports = {
     createPost: async (req, res) => {
         try {
-            console.log('masuk', req.file);
             const { caption, userId } = req.body
 
             const result = await Post.create({

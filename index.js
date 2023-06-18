@@ -3,6 +3,7 @@ const PORT = 5000
 const app = express()
 var cors = require('cors')
 
+app.use(express.static('Public'))
 app.use(express.json())
 app.use(express.static('Public'))
 app.use(cors())
