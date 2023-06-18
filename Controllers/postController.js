@@ -9,9 +9,10 @@ module.exports = {
     createPost: async (req, res) => {
         try {
             const { caption, userId } = req.body
-
+            const image = req.file.filename
+            
             const result = await Post.create({
-                image: req.file.filename,
+                image,
                 caption,
                 userId
             })
@@ -23,9 +24,9 @@ module.exports = {
             })
         } catch (error) {
             res.send({
-                success: true,
-                message: 'post success',
-                data: result
+                success: false,
+                message: error.message,
+                data: null
             })
         }
     },
