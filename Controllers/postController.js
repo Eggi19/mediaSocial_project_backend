@@ -3,6 +3,7 @@ const db = require('../models')
 const Post = db.Post
 const Like = db.Like
 const Comment = db.Comment
+const User = db.User
 
 module.exports = {
     createPost: async (req, res) => {
@@ -85,6 +86,9 @@ module.exports = {
                     },
                     {
                         model: Comment
+                    },
+                    {
+                        model: User
                     }
                 ]
             })
