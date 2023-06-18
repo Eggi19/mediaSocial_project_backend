@@ -45,11 +45,11 @@ module.exports = {
                             })
 
                             if (result) {
-                                let payload = {email: email}
+                                let payload = { email: email }
                                 const token = jwt.sign(payload, 'verification-account')
                                 const data = fs.readFileSync('./Supports/template.html', 'utf-8')
                                 const tempCompile = await handlebars.compile(data)
-                                const tempResult = tempCompile({token: token})
+                                const tempResult = tempCompile({ token: token })
                                 await transporter.sendMail({
                                     from: 'eggiyapari19@gmail.com',
                                     to: email,
@@ -89,9 +89,9 @@ module.exports = {
 
             let verifiedUser = jwt.verify(token, 'verification-account')
 
-            if(!verifiedUser) throw {message: "Unauthorized request"}
+            if (!verifiedUser) throw { message: "Unauthorized request" }
 
-            const result = User.update({isVerified: true}, {
+            const result = User.update({ isVerified: true }, {
                 where: {
                     email: verifiedUser.email
                 }
@@ -114,17 +114,60 @@ module.exports = {
 
     updateUser: async (req, res) => {
         try {
-            const {userId} = req.params
-            const {username, fullName, bio, profilePicture} = req.body
-
-            const findUsername = await User.findOne({
+            const { userId } = req.params
+            const { username, fullName, bio} = req.body
+            const profilePicture = req.file.filename
+            
+            const currentUsername = await User.findOne({
                 where: {
-                    username: username
+                    id: userId
                 }
             })
-            
+
+            if (currentUsername.username !== username) {
+                const findUsername = await User.findOne({
+                    where: {
+                        username: username
+                    }
+                })
+
+                if (!findUsername) {
+                    const result = await User.update({ username, fullName, bio, profilePicture }, {
+                        where: {
+                            id: userId
+                        }
+                    })
+
+                    res.send({
+                        status: true,
+                        message: "edit profile success",
+                        data: result
+                    })
+                } else {
+                    const errorMessage = "username is already used"
+                    throw errorMessage
+                }
+            } else {
+                const result = await User.update({ username, fullName, bio, profilePicture }, {
+                    where: {
+                        id: userId
+                    }
+                })
+
+                res.send({
+                    status: true,
+                    message: "edit profile success",
+                    data: result
+                })
+            }
+
+
         } catch (error) {
-            
+            res.send({
+                status: false,
+                message: error.message,
+                data: result
+            })
         }
     }
 }
