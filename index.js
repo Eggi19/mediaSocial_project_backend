@@ -5,7 +5,6 @@ var cors = require('cors')
 
 app.use(express.static('Public'))
 app.use(express.json())
-app.use(express.static('Public'))
 app.use(cors())
 
 app.get('/', (req, res) => {

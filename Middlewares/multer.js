@@ -20,7 +20,7 @@ const storage = multer.diskStorage({
 })
 
 const fileFilter = (req, file, cb) => {
-    if(file.mimetype.split('/')[1] === 'jpg' || file.mimetype.split('/')[1] === 'png'){
+    if(file.mimetype.split('/')[1] === 'jpg' || file.mimetype.split('/')[1] === 'jpeg'){
         cb(null, true)
     }else if(file.mimetype.split('/')[1] !== 'jpg' || file.mimetype.split('/')[1] !== 'jpeg'){
         cb(new Error('file not supported'))
