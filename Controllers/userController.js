@@ -249,7 +249,6 @@ module.exports = {
             const { email } = req.body
             let payload = { email: email }
             const token = jwt.sign(payload, 'reset-password')
-            console.log(token);
 
             const data = fs.readFileSync('./Supports/forgetPassword.html', 'utf-8')
             const tempCompile = await handlebars.compile(data)
