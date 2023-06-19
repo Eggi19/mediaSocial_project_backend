@@ -145,7 +145,7 @@ module.exports = {
                             data: result
                         })
                     } else {
-                        const errorMessage = "username is already used"
+                        const errorMessage = {message: "username is already used"}
                         throw errorMessage
                     }
                 } else {
@@ -188,7 +188,7 @@ module.exports = {
                             data: result
                         })
                     } else {
-                        const errorMessage = "username is already used"
+                        const errorMessage = {message: "username is already used"}
                         throw errorMessage
                     }
                 } else {
