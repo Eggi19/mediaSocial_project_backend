@@ -139,5 +139,30 @@ module.exports = {
                 data: null
             })
         }
+    },
+
+    editPost: async (req, res) => {
+        try {
+            const {postId} = req.params
+            const {caption} = req.body
+
+            const result = await Post.update({caption}, {
+                where: {
+                    id: postId
+                }
+            })
+
+            res.send({
+                success: true,
+                message: "edit post success",
+                data: result
+            })
+        } catch (error) {
+            res.send({
+                success: false,
+                message: error.message,
+                data: null
+            })
+        }
     }
 }
