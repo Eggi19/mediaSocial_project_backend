@@ -242,5 +242,64 @@ module.exports = {
                 data: null
             })
         }
+    },
+
+    sendEmailForgetPassword: async (req, res) => {
+        try {
+            const { email } = req.body
+            let payload = { email: email }
+            const token = jwt.sign(payload, 'reset-password')
+            console.log(token);
+
+            const data = fs.readFileSync('./Supports/forgetPassword.html', 'utf-8')
+            const tempCompile = await handlebars.compile(data)
+            const tempResult = tempCompile({ token: token })
+            await transporter.sendMail({
+                from: 'eggiyapari19@gmail.com',
+                to: email,
+                subject: 'Forget Password',
+                html: tempResult
+            })
+
+            res.send({
+                success: true,
+                message: "send reset password success"
+            })
+        } catch (error) {
+            res.send({
+                success: true,
+                message: error.message
+            })
+        }
+    },
+
+    resetPassword: async (req, res) => {
+        try {
+            const { password } = req.body
+            const salt = await bcrypt.genSalt(10)
+            const hashPassword = await bcrypt.hash(password, salt)
+
+            let token = req.headers.authorization
+            token = token.split(' ')[1]
+            let verifiedUser = jwt.verify(token, 'reset-password')
+
+            if (!verifiedUser) throw { message: "Unauthorized request" }
+
+            const result = await User.update({ password: hashPassword }, {
+                where: {
+                    email: verifiedUser.email
+                }
+            })
+
+            res.send({
+                success: true,
+                message: "reset password success"
+            })
+        } catch (error) {
+            res.send({
+                success: false,
+                message: error.message
+            })
+        }
     }
 }
