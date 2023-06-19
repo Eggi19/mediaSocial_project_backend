@@ -10,7 +10,7 @@ module.exports = {
         try {
             const { caption, userId } = req.body
             const image = req.file.filename
-            
+
             const result = await Post.create({
                 image,
                 caption,
@@ -41,18 +41,18 @@ module.exports = {
                 }
             })
 
-            if(!checkLike){
+            if (!checkLike) {
                 const result = await Like.create({
                     postId,
                     userId
                 })
-    
+
                 res.send({
                     success: true,
                     message: 'like success',
                     data: result
                 })
-            }else{
+            } else {
                 const errorMessage = "post is already liked"
                 throw errorMessage
             }
@@ -108,6 +108,28 @@ module.exports = {
             res.send({
                 success: true,
                 message: 'get post success',
+                data: result
+            })
+        } catch (error) {
+            res.send({
+                success: false,
+                message: error.message,
+                data: null
+            })
+        }
+    },
+
+    deletePost: async (req, res) => {
+        try {
+            const { postId } = req.params
+            const result = await Post.destroy({
+                where: {
+                    id: postId
+                }
+            })
+            res.send({
+                success: true,
+                message: "delete post success",
                 data: result
             })
         } catch (error) {

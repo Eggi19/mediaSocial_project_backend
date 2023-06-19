@@ -7,5 +7,6 @@ Router.post('/single-upload', multerUpload.single('image'), postController.creat
 Router.post('/like', postController.likePost)
 Router.post('/comment', postController.commentPost)
 Router.get('/', postController.getPost)
+Router.delete('/:postId', postController.deletePost)
 
 module.exports = Router
