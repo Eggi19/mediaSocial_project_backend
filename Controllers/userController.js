@@ -115,24 +115,41 @@ module.exports = {
     updateUser: async (req, res) => {
         try {
             const { userId } = req.params
-            const { username, fullName, bio} = req.body
-            const profilePicture = req.file.filename
-            
-            const currentUsername = await User.findOne({
-                where: {
-                    id: userId
-                }
-            })
+            const { username, fullName, bio } = req.body
+            const profilePicture = req.file?.filename ? req.file.filename : null
 
-            if (currentUsername.username !== username) {
-                const findUsername = await User.findOne({
+            if (profilePicture) {
+                const currentUsername = await User.findOne({
                     where: {
-                        username: username
+                        id: userId
                     }
                 })
 
-                if (!findUsername) {
-                    const result = await User.update({ username, fullName, bio, profilePicture }, {
+                if (currentUsername.username !== username) {
+                    const findUsername = await User.findOne({
+                        where: {
+                            username: username
+                        }
+                    })
+
+                    if (!findUsername) {
+                        const result = await User.update({ username, fullName, bio, profilePicture }, {
+                            where: {
+                                id: userId
+                            }
+                        })
+
+                        res.send({
+                            status: true,
+                            message: "edit profile success",
+                            data: result
+                        })
+                    } else {
+                        const errorMessage = "username is already used"
+                        throw errorMessage
+                    }
+                } else {
+                    const result = await User.update({ fullName, bio, profilePicture }, {
                         where: {
                             id: userId
                         }
@@ -143,30 +160,86 @@ module.exports = {
                         message: "edit profile success",
                         data: result
                     })
-                } else {
-                    const errorMessage = "username is already used"
-                    throw errorMessage
                 }
             } else {
-                const result = await User.update({ username, fullName, bio, profilePicture }, {
+                const currentUsername = await User.findOne({
                     where: {
                         id: userId
                     }
                 })
 
-                res.send({
-                    status: true,
-                    message: "edit profile success",
-                    data: result
-                })
-            }
+                if (currentUsername.username !== username) {
+                    const findUsername = await User.findOne({
+                        where: {
+                            username: username
+                        }
+                    })
 
+                    if (!findUsername) {
+                        const result = await User.update({ username, fullName, bio }, {
+                            where: {
+                                id: userId
+                            }
+                        })
+
+                        res.send({
+                            status: true,
+                            message: "edit profile success",
+                            data: result
+                        })
+                    } else {
+                        const errorMessage = "username is already used"
+                        throw errorMessage
+                    }
+                } else {
+                    const result = await User.update({ fullName, bio }, {
+                        where: {
+                            id: userId
+                        }
+                    })
+
+                    res.send({
+                        status: true,
+                        message: "edit profile success",
+                        data: result
+                    })
+                }
+            }
 
         } catch (error) {
             res.send({
                 status: false,
                 message: error.message,
-                data: result
+                data: null
+            })
+        }
+    },
+
+    getUser: async (req, res) => {
+        try {
+            const { userId } = req.params
+            const result = await User.findOne({
+                where: {
+                    id: userId
+                }
+            })
+
+            if (result) {
+                res.send({
+                    success: true,
+                    message: 'account found',
+                    data: result
+                })
+            } else {
+                const errorMessage = "account is not found"
+                throw errorMessage
+            }
+
+        } catch (error) {
+            res.send({
+                success: false,
+                message: error.message,
+                data: null
             })
         }
     }
